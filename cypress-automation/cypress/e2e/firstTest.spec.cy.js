@@ -126,6 +126,72 @@ describe("Automate ChatGPT Interaction", () => {
     cy.xpath('//ul[@class = "side-navbar-links"]//a[contains (text(), "COMMITTEES")]').click();
     cy.xpath('//div[contains(@class, "individual-card")]//p[contains(text(), "Kishor kumar")]').scrollIntoView();
     cy.xpath('//div[contains (@class, "member-list-container")]//p[contains(text(), "Kishor kumar")]').scrollIntoView();
-    cy.xpath('//div[contains(@class, "swiper-slide")]//div[contains(@class, "active-image")]').should("contain.text", "TECHNICAL COMMITTEE");
+    cy.xpath('//div[contains(@class, "swiper-slide")]//div[contains(@class, "active-image")]//following::div[1]').should(
+      "contain.text",
+      "TECHNICAL COMMITTEE"
+    );
+    //test
+    cy.get(".member-list-container").then(($container) => {
+      // Check if the container has a vertical scrollbar
+      const isScrollable = $container[0].scrollHeight > $container[0].clientHeight;
+      expect(isScrollable).to.be.true;
+
+      // Store the initial scroll position
+      const initialScrollTop = $container.scrollTop();
+      cy.wait(2000);
+      // Scroll the container down
+      $container.scrollTop(initialScrollTop + 1000);
+
+      // Verify the container's scroll position has changed
+      cy.wrap($container).should(($el) => {
+        expect($el.scrollTop()).to.be.greaterThan(initialScrollTop);
+      });
+    });
+    const browser = Cypress.browser;
+    cy.window().then((win) => {
+      const viewportWidth = win.innerWidth;
+      const viewportHeight = win.innerHeight;
+      if (viewportWidth >= 1280) {
+        cy.get(".swiper-button-next").click();
+      } else {
+        cy.xpath(
+          '//div[contains(@class, "swiper-slide")]//div[contains(@class, "active-image")]//following::div[contains(text(), "WEBSITE DEVELOPMENT")]'
+        ).click();
+      }
+      // if (!cy.viewport("iphone-x")) cy.get(".swiper-button-next").click();
+    });
   });
 });
+
+// describe("My Test Suite", function () {
+//   before(() => {
+//     // Code to run before all tests
+//   });
+
+//   beforeEach(() => {
+//     // Code to run before each test
+//     cy.visit("/login");
+//   });
+
+//   afterEach(() => {
+//     // Code to run after each test
+//   });
+
+//   after(() => {
+//     // Code to run after all tests
+//   });
+
+//   it("should log in with valid credentials", function () {
+//     cy.get('input[name="username"]').type("myUsername");
+//     cy.get('input[name="password"]').type("myPassword");
+//     cy.get('button[type="submit"]').click();
+//     cy.url().should("include", "/dashboard");
+//   });
+
+//   it("should show an error message for invalid credentials", function () {
+//     cy.get('input[name="username"]').type("wrongUsername");
+//     cy.get('input[name="password"]').type("wrongPassword");
+//     cy.get('button[type="submit"]').click();
+//     cy.get(".error-message").should("be.visible").and("contain", "Invalid credentials");
+//   });
+// });
